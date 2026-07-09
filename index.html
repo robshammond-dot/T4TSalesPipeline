@@ -232,6 +232,7 @@
 
 <div class="wrap">
   <p class="hint">Click a stage in the diagram to see its definition, entry criteria, consultant action, and how it lines up with UDMS. Timed follow-ups are automated; what's shown here is the manual part, moving the deal on and capturing information per the <a href="https://robshammond-dot.github.io/ThompsonsForTravelProfiling/" target="_blank" rel="noopener">Know Your Customer</a> profile.</p>
+  <p class="hint">See also: <a href="Thompsons_Customer_Data_Bridge_Interactive.html">Customer Profile &amp; Data Bridge</a>, how enquiries actually reach Freshsales from the webform, before they ever hit the New stage below.</p>
 
   <div class="diagram-card">
   <svg class="pipeline" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg">
@@ -323,6 +324,10 @@
       <div class="ref-tag">Assignment</div>
       <div class="ref-text">Round robin is native and confirmed (Freshsales Auto-assignment rules). Skill-scoped round robin, routing by destination or specialism, is buildable the same way, using multiple rules each scoped to a smaller group. Workload/capacity-based assignment is not confirmed available in Freshsales; that would need checking with Freshworks directly before it's offered as an option.</div>
     </div>
+    <div class="ref-row">
+      <div class="ref-tag">Deal stage on Sequences</div>
+      <div class="ref-text">Sequences only run against Contacts and Accounts, never Deals directly, so a sequence step can't condition on a Deal's pipeline stage on its own. The fix is a single Contact field ("Status") kept in sync by one workflow that watches the Deal's stage and copies it across whenever it changes, not a second stage list mirroring the whole pipeline. A full mirrored pipeline would still need the same bridge, just with more fields to keep in sync for no real benefit, since it's one enquiry per customer at a time here. The edge case (a customer with two open deals at once, a live Won booking and a fresh enquiry) is real but rare enough not to engineer around directly; a saved view flagging contacts with more than one open Deal is the practical safety net, a human checks it rather than the field trying to hold two truths at once.</div>
+    </div>
   </div>
 
   <div class="ref-card seq-card">
@@ -365,27 +370,34 @@
 
   <div class="ref-card seq-card">
     <h3>Reference: Sales Sequence Example, Quoted Stage Follow-up</h3>
-    <p class="seq-intro">A Classic sequence: fixed days, escalating urgency, running while the deal sits in Quoted. This is the pattern for a Thailand holiday quote; swap the destination detail per deal, the structure and timing stay the same.</p>
+    <p class="seq-intro">A Classic sequence, kept deliberately simple: one generic Quoted follow-up, not split by destination or package type. That's a day-one choice, not a limitation, splitting by destination only earns its complexity once there's more than one Quoted sequence running and something to keep them from overlapping. Right now there isn't, so the entry condition stays a single line.</p>
 
     <div class="seq-step">
-      <div class="seq-meta"><span class="seq-day">Day 3</span><span class="seq-condition">Status is Quoted</span></div>
+      <div class="seq-meta"><span class="seq-day">Entry</span><span class="seq-condition">Contact-level condition</span></div>
+      <div class="seq-subject">Status is Quoted</div>
+      <div class="seq-body">"Status" here is a field on the Contact, not the Deal, Sequences can only see Contacts and Accounts, never Deals directly. This field is kept accurate by a single workflow that watches the Deal's pipeline stage and copies it across whenever it changes, so the Contact always reflects whatever the Deal's actual stage is.</div>
+    </div>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 3</span><span class="seq-condition">Status is Quoted, AND last contacted mode is not Incoming email</span></div>
       <div class="seq-subject">{{contact.first_name}}, your Thailand holiday is ready to book</div>
       <div class="seq-body">Hi {{contact.first_name}}, just checking you've had a chance to look over your Thailand quote, 3 nights in Phuket and 2 in Bangkok, exactly as we discussed. Let me know if you'd like any changes, or if you're ready to lock it in.</div>
     </div>
 
     <div class="seq-step">
-      <div class="seq-meta"><span class="seq-day">Day 8</span><span class="seq-condition">if not replied to Step 1</span></div>
+      <div class="seq-meta"><span class="seq-day">Day 8</span><span class="seq-condition">if not replied to Step 1, AND last contacted mode is not Incoming email</span></div>
       <div class="seq-subject">Still thinking about Thailand, {{contact.first_name}}?</div>
       <div class="seq-body">No pressure at all, just checking in. If budget or dates are the sticking point, I can take another look and see what flexibility there is. Happy to jump on a quick call if that's easier than email.</div>
     </div>
 
     <div class="seq-step">
-      <div class="seq-meta"><span class="seq-day">Day 13</span><span class="seq-condition">if not replied to Step 1, final step</span></div>
+      <div class="seq-meta"><span class="seq-day">Day 13</span><span class="seq-condition">if not replied to Step 1, AND last contacted mode is not Incoming email, final step</span></div>
       <div class="seq-subject">Last call to confirm your Thailand booking, {{contact.first_name}}</div>
       <div class="seq-body">Your quote is due to expire shortly, and flight pricing can shift after that. If Thailand's still on the cards, let's get it locked in this week, reply here or give me a call and I'll take care of the rest.</div>
     </div>
 
-    <div class="seq-exit"><b>Exits sequence when:</b> customer replies to the email, or email status is Bounced. Stays in sequence if: no owner assigned, or unsubscribed (handled separately via opt-out compliance, not sequence exit). Moving the deal to Booking Acceptance and Payment, Parked, or Lost removes it from the Quoted stage entirely, which stops the sequence regardless of these exit rules, that's the real off-switch, not something the sequence itself needs to detect.</div>
+    <div class="seq-exit"><b>Why the "not Incoming email" guard matters:</b> "if not replied to Step 1" only catches replies to this sequence's own emails. If the traveller emails in about something else entirely, calls, or messages through another channel, that's a real conversation already happening, and none of these three steps should fire on top of it. The guard checks activity broadly, not just replies to this specific thread.</div>
+    <div class="seq-exit"><b>Exits sequence when:</b> customer replies, or email status is Bounced. Moving the deal to Booking Acceptance and Payment, Parked, or Lost updates the mirrored Status field away from Quoted, which is the real off-switch, the sequence's own exit rules are a backstop, not the primary mechanism.</div>
   </div>
 </div>
 
