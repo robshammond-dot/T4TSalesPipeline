@@ -26,6 +26,8 @@
     --red-bg: #FBE9E7;
     --red-border: #D98079;
     --line: #CFE9F8;
+    --amber: #B5720A;
+    --amber-bg: #FBF1E1;
   }
   * { box-sizing: border-box; }
   body {
@@ -154,12 +156,61 @@
     margin-bottom: 4px;
   }
   .ticket-row .value { font-size: 14.5px; line-height: 1.55; color: #EAF3FB; }
+  .ticket-row.udms .label { color: #FFD98A; }
+  .ticket-row.udms { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 12px; margin: -2px 0; }
+  .ticket-row.assign .label { color: #A9E9C3; }
+  .ticket-row.assign { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 12px; }
+
+  .ref-card {
+    margin-top: 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    background: #FAFDFF;
+  }
+  .ref-card h3 {
+    font-family: 'Poppins', sans-serif; color: var(--navy); font-size: 15px;
+    margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .ref-row { display: flex; gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .ref-row:first-of-type { border-top: none; }
+  .ref-tag {
+    flex: 0 0 150px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12.5px; color: var(--navy);
+  }
+  .ref-text { flex: 1; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+  .ref-text .status { font-weight: 700; color: var(--navy-deep); }
+
+  .seq-card { margin-top: 20px; }
+  .seq-intro { font-size: 13.5px; line-height: 1.55; color: var(--ink); margin: 0 0 16px; }
+  .seq-step {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    background: #FFFFFF;
+  }
+  .seq-step:last-child { margin-bottom: 0; }
+  .seq-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .seq-day {
+    font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px;
+    color: #fff; background: var(--navy); padding: 3px 11px; border-radius: 999px;
+  }
+  .seq-condition { font-size: 12px; color: var(--slate); font-style: italic; }
+  .seq-subject { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14px; color: var(--navy-deep); margin-bottom: 6px; }
+  .seq-body { font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+  .seq-exit {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--slate); line-height: 1.6;
+  }
+  .seq-exit b { color: var(--navy); }
 
   @media (max-width: 560px) {
     .head-inner { padding: 22px 16px 4px; }
     .wrap { padding: 0 16px; }
     .ticket-head, .ticket-body { padding-left: 20px; padding-right: 20px; }
     .barcode { display: none; }
+    .ref-row { flex-direction: column; gap: 4px; }
+    .ref-tag { flex: none; }
   }
 </style>
 </head>
@@ -180,10 +231,10 @@
 </div>
 
 <div class="wrap">
-  <p class="hint">Click a stage in the diagram to see its definition, entry criteria, and consultant action. Timed follow-ups are automated; what's shown here is the manual part, moving the deal on and capturing information per the <a href="https://robshammond-dot.github.io/ThompsonsForTravelProfiling/" target="_blank" rel="noopener">Know Your Customer</a> profile.</p>
+  <p class="hint">Click a stage in the diagram to see its definition, entry criteria, consultant action, and how it lines up with UDMS. Timed follow-ups are automated; what's shown here is the manual part, moving the deal on and capturing information per the <a href="https://robshammond-dot.github.io/ThompsonsForTravelProfiling/" target="_blank" rel="noopener">Know Your Customer</a> profile.</p>
 
   <div class="diagram-card">
-  <svg class="pipeline" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg">
+  <svg class="pipeline" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -191,71 +242,58 @@
     </defs>
 
     <g class="stage-box box-main" data-stage="new" onclick="showStage('new')">
-      <rect x="40" y="60" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="107.5" y="96" text-anchor="middle">New</text>
+      <rect x="50" y="60" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="140" y="99" text-anchor="middle">New</text>
     </g>
     <g class="stage-box box-main" data-stage="consulting" onclick="showStage('consulting')">
-      <rect x="190" y="60" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="257.5" y="96" text-anchor="middle">Consulting</text>
-    </g>
-    <g class="stage-box box-main" data-stage="consulting_fu" onclick="showStage('consulting_fu')">
-      <rect x="340" y="60" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="407.5" y="82" text-anchor="middle">Consulting</text>
-      <text class="node-label" x="407.5" y="102" text-anchor="middle">follow up</text>
+      <rect x="250" y="60" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="340" y="99" text-anchor="middle">Consulting</text>
     </g>
     <g class="stage-box box-main" data-stage="quoted" onclick="showStage('quoted')">
-      <rect x="490" y="60" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="557.5" y="96" text-anchor="middle">Quoted</text>
+      <rect x="450" y="60" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="540" y="99" text-anchor="middle">Quoted</text>
     </g>
 
-    <line x1="175" y1="92" x2="188" y2="92" class="connector" marker-end="url(#arrow)"/>
-    <line x1="325" y1="92" x2="338" y2="92" class="connector" marker-end="url(#arrow)"/>
-    <line x1="475" y1="92" x2="488" y2="92" class="connector" marker-end="url(#arrow)"/>
-    <path d="M557.5,124 V152 H107.5 V178" class="connector" marker-end="url(#arrow)"/>
+    <line x1="230" y1="95" x2="248" y2="95" class="connector" marker-end="url(#arrow)"/>
+    <line x1="430" y1="95" x2="448" y2="95" class="connector" marker-end="url(#arrow)"/>
+    <path d="M540,130 V158 H140 V188" class="connector" marker-end="url(#arrow)"/>
 
-    <g class="stage-box box-main" data-stage="quoted_fu" onclick="showStage('quoted_fu')">
-      <rect x="40" y="180" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="107.5" y="200" text-anchor="middle">Quoted</text>
-      <text class="node-label" x="107.5" y="220" text-anchor="middle">follow up</text>
-    </g>
     <g class="stage-box box-main" data-stage="booking" onclick="showStage('booking')">
-      <rect x="190" y="180" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="257.5" y="200" text-anchor="middle">Booking &amp;</text>
-      <text class="node-label" x="257.5" y="220" text-anchor="middle">payment</text>
+      <rect x="50" y="190" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="140" y="214" text-anchor="middle">Booking Acceptance</text>
+      <text class="node-label" x="140" y="236" text-anchor="middle">and Payment</text>
     </g>
     <g class="stage-box box-main" data-stage="deposit" onclick="showStage('deposit')">
-      <rect x="340" y="180" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="407.5" y="200" text-anchor="middle">Deposit</text>
-      <text class="node-label" x="407.5" y="220" text-anchor="middle">received</text>
+      <rect x="250" y="190" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="340" y="229" text-anchor="middle">Deposit Received</text>
     </g>
     <g class="stage-box box-won" data-stage="won" onclick="showStage('won')">
-      <rect x="490" y="180" width="135" height="64" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="557.5" y="200" text-anchor="middle">Full payment</text>
-      <text class="node-label" x="557.5" y="220" text-anchor="middle">(Won)</text>
+      <rect x="450" y="190" width="180" height="70" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="540" y="214" text-anchor="middle">Full Payment</text>
+      <text class="node-label" x="540" y="236" text-anchor="middle">(Won)</text>
     </g>
 
-    <line x1="175" y1="212" x2="188" y2="212" class="connector" marker-end="url(#arrow)"/>
-    <line x1="325" y1="212" x2="338" y2="212" class="connector" marker-end="url(#arrow)"/>
-    <line x1="475" y1="212" x2="488" y2="212" class="connector" marker-end="url(#arrow)"/>
+    <line x1="230" y1="225" x2="248" y2="225" class="connector" marker-end="url(#arrow)"/>
+    <line x1="430" y1="225" x2="448" y2="225" class="connector" marker-end="url(#arrow)"/>
 
-    <line x1="340" y1="244" x2="340" y2="290" class="connector-dashed"/>
-    <text class="flow-label" x="350" y="270" text-anchor="start">Can move to any</text>
-    <text class="flow-label" x="350" y="284" text-anchor="start">exit state below</text>
-    <line x1="340" y1="290" x2="187" y2="314" class="connector-dashed" marker-end="url(#arrow)"/>
-    <line x1="340" y1="290" x2="340" y2="314" class="connector-dashed" marker-end="url(#arrow)"/>
-    <line x1="340" y1="290" x2="493" y2="314" class="connector-dashed" marker-end="url(#arrow)"/>
+    <line x1="340" y1="260" x2="340" y2="300" class="connector-dashed"/>
+    <text class="flow-label" x="350" y="278" text-anchor="start">Can move to any</text>
+    <text class="flow-label" x="350" y="292" text-anchor="start">exit state below</text>
+    <line x1="340" y1="300" x2="187" y2="324" class="connector-dashed" marker-end="url(#arrow)"/>
+    <line x1="340" y1="300" x2="340" y2="324" class="connector-dashed" marker-end="url(#arrow)"/>
+    <line x1="340" y1="300" x2="493" y2="324" class="connector-dashed" marker-end="url(#arrow)"/>
 
     <g class="stage-box box-parked" data-stage="parked" onclick="showStage('parked')">
-      <rect x="120" y="316" width="130" height="44" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="185" y="342" text-anchor="middle">Parked</text>
+      <rect x="120" y="326" width="130" height="44" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="185" y="352" text-anchor="middle">Parked</text>
     </g>
     <g class="stage-box box-exit" data-stage="cancelled" onclick="showStage('cancelled')">
-      <rect x="275" y="316" width="130" height="44" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="340" y="342" text-anchor="middle">Cancelled</text>
+      <rect x="275" y="326" width="130" height="44" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="340" y="352" text-anchor="middle">Cancelled</text>
     </g>
     <g class="stage-box box-exit" data-stage="lost" onclick="showStage('lost')">
-      <rect x="430" y="316" width="130" height="44" rx="10" stroke-width="1.4"/>
-      <text class="node-label" x="495" y="342" text-anchor="middle">Lost</text>
+      <rect x="430" y="326" width="130" height="44" rx="10" stroke-width="1.4"/>
+      <text class="node-label" x="495" y="352" text-anchor="middle">Lost</text>
     </g>
   </svg>
 
@@ -270,21 +308,153 @@
   <div class="panel-slot" id="panelSlot">
     <div class="placeholder">Click a stage above to see its details</div>
   </div>
+
+  <div class="ref-card">
+    <h3>Reference: how this pipeline was decided</h3>
+    <div class="ref-row">
+      <div class="ref-tag">UDMS mapping</div>
+      <div class="ref-text">UDMS has more stages than this for managing the operational side of a booking (hotel confirmations, itinerary building, and the rest), but those aren't relevant here since Freshsales doesn't manage the post-sale booking process the way UDMS does. Only three UDMS statuses matter for this pipeline: <span class="status">Quoted</span>, <span class="status">Quote Pending</span>, and <span class="status">Booked</span>. There's no integration between the two systems, so every Freshsales stage is moved manually, which is exactly why this pipeline stays close to those three names rather than inventing stages nothing in UDMS reflects. Consulting Follow Up and Quoted Follow Up were removed for the same reason: the follow-up sequence runs on top of the Quoted stage itself, using a sequence condition tied to the stage rather than a separate stage for "following up", so a dedicated Follow Up stage added manual admin without adding function. Freshsales' job stops being about matching UDMS once a deal is Won, UDMS owns the operational booking from there, but Freshsales still handles post-booking communication and any pre-trip journey information shared with the traveller, so Won isn't the end of the relationship, just the end of the sales pipeline tracking it.</div>
+    </div>
+    <div class="ref-row">
+      <div class="ref-tag">Quoted vs Quote Pending</div>
+      <div class="ref-text">UDMS's Quote Pending covers everything from "quote sent, waiting" through to "client is filling in the booking form and passport info." Freshsales' Quoted stage deliberately spans that whole window too, the follow-up sequence keeps nudging until something changes. Booking Acceptance and Payment is the manual signal that something has changed: the moment the agent sees the booking form and passport info come through, they move the deal out of Quoted specifically to stop the sequence firing at someone who's already progressing.</div>
+    </div>
+    <div class="ref-row">
+      <div class="ref-tag">Assignment</div>
+      <div class="ref-text">Round robin is native and confirmed (Freshsales Auto-assignment rules). Skill-scoped round robin, routing by destination or specialism, is buildable the same way, using multiple rules each scoped to a smaller group. Workload/capacity-based assignment is not confirmed available in Freshsales; that would need checking with Freshworks directly before it's offered as an option.</div>
+    </div>
+  </div>
+
+  <div class="ref-card seq-card">
+    <h3>Reference: Auto-Assignment Example, New Stage</h3>
+    <p class="seq-intro">Auto-assignment means nobody has to sit there manually assigning every new enquiry as it lands, Freshsales does it the moment a lead comes in. That doesn't mean losing control over who gets what: each rule defines exactly which consultants are eligible, the team decides the group, Freshsales just handles the turn-taking inside it. Rules run in priority order, set directly in Freshsales' Auto-assignment rules screen, so the more specific rule needs the higher priority or the catch-all below it grabs everything first.</p>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Rule 1</span><span class="seq-condition">Priority 1, runs first</span></div>
+      <div class="seq-subject">Thailand / Asia specialists</div>
+      <div class="seq-body">Condition: Destination contains "Thailand" or "Asia". Round-robins only among the smaller group of consultants who specialise in that region, so an Asia enquiry always lands with someone who actually knows it.</div>
+    </div>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Rule 2</span><span class="seq-condition">Priority 2, catch-all</span></div>
+      <div class="seq-subject">All other new enquiries</div>
+      <div class="seq-body">Condition: none, catches anything Rule 1 didn't. Round-robins across the full consulting team, cycling back to the start once everyone's had a turn.</div>
+    </div>
+
+    <div class="seq-exit"><b>On enquiry load:</b> round robin naturally spreads new enquiries evenly, nobody gets skipped over or over-picked based on who happens to be top of mind. Workload/capacity-based assignment is not available in Freshsales, that's a Freshdesk feature for support tickets, not something Deals has access to. Practical middle ground: keep round robin for the fairness it already gives you, and check deal counts per consultant periodically via reporting, adjusting who's in each rule's rotation if someone's consistently carrying more than their share. More specialisms just mean more rules stacked above the catch-all, each scoped to its own smaller group.</div>
+  </div>
+
+  <div class="ref-card seq-card">
+    <h3>Reference: Sales Sequence Example, Consulting Stage Follow-up</h3>
+    <p class="seq-intro">Shorter and lighter than the Quoted sequence, deliberately. There's no quote yet at this stage, nothing time-sensitive to reference, and the ask is small (a few details, not a decision), so two gentle touches over five days does the job without it feeling like a chase for something that doesn't exist yet.</p>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 2</span><span class="seq-condition">Status is Consulting, no reply to initial outreach</span></div>
+      <div class="seq-subject">{{contact.first_name}}, just a couple of details for your Thailand trip</div>
+      <div class="seq-body">Hi {{contact.first_name}}, thanks for getting in touch about Thailand! To put together the right quote for you, I just need a bit more detail, who's travelling, your ideal dates, and roughly what you'd like to spend. Reply whenever suits, and I'll get started.</div>
+    </div>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 5</span><span class="seq-condition">if not replied to Step 1, final step</span></div>
+      <div class="seq-subject">Still keen to help plan your Thailand trip, {{contact.first_name}}?</div>
+      <div class="seq-body">No rush at all, just wanted to check in. If it's easier, feel free to WhatsApp me or give me a call, whatever's quickest for you. Looking forward to hearing from you when you're ready.</div>
+    </div>
+
+    <div class="seq-exit"><b>Exits sequence when:</b> customer replies, or email status is Bounced. No third step, and no auto-move to Lost or Parked after Day 5, if there's still no reply, that's a judgement call for the agent to make manually, not something the sequence decides on its own.</div>
+  </div>
+
+  <div class="ref-card seq-card">
+    <h3>Reference: Sales Sequence Example, Quoted Stage Follow-up</h3>
+    <p class="seq-intro">A Classic sequence: fixed days, escalating urgency, running while the deal sits in Quoted. This is the pattern for a Thailand holiday quote; swap the destination detail per deal, the structure and timing stay the same.</p>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 3</span><span class="seq-condition">Status is Quoted</span></div>
+      <div class="seq-subject">{{contact.first_name}}, your Thailand holiday is ready to book</div>
+      <div class="seq-body">Hi {{contact.first_name}}, just checking you've had a chance to look over your Thailand quote, 3 nights in Phuket and 2 in Bangkok, exactly as we discussed. Let me know if you'd like any changes, or if you're ready to lock it in.</div>
+    </div>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 8</span><span class="seq-condition">if not replied to Step 1</span></div>
+      <div class="seq-subject">Still thinking about Thailand, {{contact.first_name}}?</div>
+      <div class="seq-body">No pressure at all, just checking in. If budget or dates are the sticking point, I can take another look and see what flexibility there is. Happy to jump on a quick call if that's easier than email.</div>
+    </div>
+
+    <div class="seq-step">
+      <div class="seq-meta"><span class="seq-day">Day 13</span><span class="seq-condition">if not replied to Step 1, final step</span></div>
+      <div class="seq-subject">Last call to confirm your Thailand booking, {{contact.first_name}}</div>
+      <div class="seq-body">Your quote is due to expire shortly, and flight pricing can shift after that. If Thailand's still on the cards, let's get it locked in this week, reply here or give me a call and I'll take care of the rest.</div>
+    </div>
+
+    <div class="seq-exit"><b>Exits sequence when:</b> customer replies to the email, or email status is Bounced. Stays in sequence if: no owner assigned, or unsubscribed (handled separately via opt-out compliance, not sequence exit). Moving the deal to Booking Acceptance and Payment, Parked, or Lost removes it from the Quoted stage entirely, which stops the sequence regardless of these exit rules, that's the real off-switch, not something the sequence itself needs to detect.</div>
+  </div>
 </div>
 
 <script>
   const stages = {
-    new: { code: "TFT \u00b7 01", title: "New", badge: "", def: "Enquiry has landed in Freshsales but has not yet been actioned by a consultant.", entry: "Auto-created from webform submissions; entered manually by the consultant for phone, chat, email, or walk-in enquiries.", action: "Acknowledge the enquiry once it's assigned. Read everything already shared before responding, so no question repeats one already answered." },
-    consulting: { code: "TFT \u00b7 02", title: "Consulting", badge: "", def: "Consultant is actively engaging with the traveller to understand their needs.", entry: "First outbound or inbound response logged against the lead.", action: "Profile the traveller: who's travelling, the occasion, what the budget really includes, and their travel style, not just the headline numbers. Move to Consulting Follow Up if gaps remain, or straight to Quoted once enough is captured." },
-    consulting_fu: { code: "TFT \u00b7 03", title: "Consulting Follow Up", badge: "", def: "Consultation has started but key details are still outstanding before a quote can be built.", entry: "Traveller has gone quiet, or information needed to quote is incomplete.", action: "Automation sends the timed nudge; the agent's job is closing the specific profile gap holding up a quote (ages, occasion, style, budget shape) and moving the deal on once it's closed." },
-    quoted: { code: "TFT \u00b7 04", title: "Quoted", badge: "", def: "A formal quote has been generated in UDMS and shared with the traveller.", entry: "Quote reference from UDMS linked to the deal.", action: "Confirm the quote reflects what was learned about the traveller (occasion, style, party) before sending, link the UDMS quote reference, and move to Quoted Follow Up." },
-    quoted_fu: { code: "TFT \u00b7 05", title: "Quoted Follow Up", badge: "", def: "Traveller has received the quote and is being nurtured towards a decision.", entry: "Quote sent and no acceptance yet.", action: "Automation sends the timed nudge; the agent's job is responding to it, logging any objection or hesitation against the profile (price, timing, fit), and moving the deal to Booking Acceptance, Parked, or Lost." },
-    booking: { code: "TFT \u00b7 07", title: "Booking Acceptance and Payment", badge: "", def: "Traveller has accepted the quote and initial booking and payment steps are underway.", entry: "Acceptance recorded in UDMS.", action: "Process the acceptance and request the deposit; flag any occasion or upgrade opportunity from the profile for the post-sales handover." },
-    deposit: { code: "TFT \u00b7 08", title: "Deposit Received", badge: "", def: "Deposit payment has been confirmed.", entry: "Deposit payment recorded in UDMS.", action: "Confirm with the traveller, and create a manual task for the balance due date until that reminder is automated." },
-    won: { code: "TFT \u00b7 09", title: "Full Payment Received \u2013 Won", badge: "won", def: "Full payment received and booking confirmed.", entry: "Balance paid and booking confirmed in UDMS.", action: "Close as Won, and hand the full profile (occasion, style, preferences, what worked) to post-sales/ops so future contact continues the relationship rather than restarting it." },
-    parked: { code: "TFT \u00b7 06", title: "Parked", badge: "parked", def: "Enquiry is genuinely on hold at the traveller's request, not abandoned.", entry: "Traveller asks to revisit later, or travel dates are undecided.", action: "Create a manual task for the agreed revisit date, and log why it's parked against the profile so the next conversation continues rather than restarts." },
-    cancelled: { code: "TFT \u00b7 10", title: "Cancelled", badge: "exit", def: "A booking that had progressed past acceptance has since been cancelled.", entry: "Cancellation processed in UDMS after acceptance or payment.", action: "Log the cancellation reason and process the refund per policy; note anything from the profile that explains it, for future contact." },
-    lost: { code: "TFT \u00b7 11", title: "Lost", badge: "exit", def: "Enquiry did not convert to a booking at all.", entry: "Traveller declines, goes cold, or books elsewhere before booking stage.", action: "Log the loss reason against the profile (price, timing, fit, competitor); it's the record a future re-enquiry will start from." }
+    new: {
+      code: "TFT \u00b7 01", title: "New", badge: "",
+      udms: "Not one of the three UDMS statuses relevant here; this stage happens before UDMS is involved at all.",
+      def: "Enquiry has landed in Freshsales but has not yet been actioned by a consultant.",
+      entry: "Auto-created from webform submissions; entered manually by the consultant for phone, chat, email, or walk-in enquiries.",
+      action: "Acknowledge the enquiry once it's assigned. Read everything already shared before responding, so no question repeats one already answered.",
+      assign: "Round robin (native Freshsales Auto-assignment rules) is the confirmed starting point. Skill-scoped round robin (separate rules per specialism, each round-robining a smaller group) is buildable the same way. Workload/capacity-based assignment isn't confirmed available in Freshsales, worth asking Freshworks directly before relying on it."
+    },
+    consulting: {
+      code: "TFT \u00b7 02", title: "Consulting", badge: "",
+      udms: "Not one of the three UDMS statuses relevant here; this happens before a quote exists.",
+      def: "Consultant is actively engaging with the traveller to understand their needs.",
+      entry: "First outbound or inbound response logged against the lead.",
+      action: "Profile the traveller: who's travelling, the occasion, what the budget really includes, and their travel style, not just the headline numbers. Move to Quoted once enough is captured."
+    },
+    quoted: {
+      code: "TFT \u00b7 03", title: "Quoted", badge: "",
+      udms: "Covers UDMS's Quoted and Quote Pending together. UDMS doesn't distinguish \u2018waiting on a decision\u2019 from \u2018filling in the booking form\u2019, so this one Freshsales stage spans both.",
+      def: "A formal quote has been generated in UDMS and shared with the traveller. The follow-up sequence runs automatically while the deal sits here.",
+      entry: "Quote reference from UDMS linked to the deal.",
+      action: "Confirm the quote reflects what was learned about the traveller before sending, and link the UDMS quote reference. The moment the booking form and passport info come through, move the deal to Booking Acceptance and Payment, that's what stops the follow-up sequence firing at someone who's already moving forward."
+    },
+    booking: {
+      code: "TFT \u00b7 04", title: "Booking Acceptance and Payment", badge: "",
+      udms: "Not one of the three UDMS statuses relevant here, UDMS calls all of this Quote Pending. This stage exists purely as Freshsales' own signal to stop the follow-up sequence once the client is genuinely engaging.",
+      def: "Traveller has submitted the booking form and passport info, and initial booking steps are underway.",
+      entry: "Booking form and passport info received; the agent moves the deal here manually, which is what stops the Quoted-stage follow-up sequence.",
+      action: "Process the acceptance and request the deposit; flag any occasion or upgrade opportunity from the profile for the post-sales handover."
+    },
+    deposit: {
+      code: "TFT \u00b7 05", title: "Deposit Received", badge: "",
+      udms: "Not one of the three UDMS statuses relevant here.",
+      def: "Deposit payment has been confirmed.",
+      entry: "Deposit payment recorded in UDMS.",
+      action: "Confirm with the traveller, and create a manual task for the balance due date until that reminder is automated."
+    },
+    won: {
+      code: "TFT \u00b7 06", title: "Full Payment Received \u2013 Won", badge: "won",
+      udms: "Maps to UDMS's Booked status.",
+      def: "Full payment received and booking confirmed.",
+      entry: "Balance paid and booking confirmed in UDMS.",
+      action: "Close as Won, and hand the full profile (occasion, style, preferences, what worked) to post-sales/ops. UDMS owns the operational booking from here, but Freshsales still handles post-booking communication and any pre-trip journey information shared with the traveller, so this isn't the end of contact, just the end of the sales pipeline tracking it."
+    },
+    parked: {
+      code: "TFT \u00b7 07", title: "Parked", badge: "parked",
+      udms: "Not one of the three UDMS statuses relevant here.",
+      def: "Enquiry is genuinely on hold at the traveller's request, not abandoned.",
+      entry: "Traveller asks to revisit later, or travel dates are undecided.",
+      action: "Create a manual task for the agreed revisit date, and log why it's parked against the profile so the next conversation continues rather than restarts."
+    },
+    cancelled: {
+      code: "TFT \u00b7 08", title: "Cancelled", badge: "exit",
+      udms: "Not one of the three UDMS statuses relevant here.",
+      def: "A booking that had progressed past acceptance has since been cancelled.",
+      entry: "Cancellation processed in UDMS after acceptance or payment.",
+      action: "Log the cancellation reason and process the refund per policy; note anything from the profile that explains it, for future contact."
+    },
+    lost: {
+      code: "TFT \u00b7 09", title: "Lost", badge: "exit",
+      udms: "Not one of the three UDMS statuses relevant here; a deal marked Lost typically never reached a UDMS quote-and-beyond status.",
+      def: "Enquiry did not convert to a booking at all.",
+      entry: "Traveller declines, goes cold, or books elsewhere before booking stage.",
+      action: "Log the loss reason against the profile (price, timing, fit, competitor); it's the record a future re-enquiry will start from."
+    }
   };
 
   function showStage(id) {
@@ -293,6 +463,7 @@
     const slot = document.getElementById('panelSlot');
     const badgeClass = s.badge ? ' ' + s.badge : '';
     const badgeText = s.badge === 'won' ? 'Won' : (s.badge === 'parked' ? 'Paused' : (s.badge === 'exit' ? 'Closed' : 'In progress'));
+    const assignRow = s.assign ? ('<div class="ticket-row assign"><span class="label">Assignment</span><span class="value">' + s.assign + '</span></div>') : '';
     slot.innerHTML =
       '<div class="ticket">' +
         '<div class="ticket-head">' +
@@ -303,9 +474,11 @@
         '</div>' +
         '<div class="perforation"><span class="notch left"></span><span class="notch right"></span></div>' +
         '<div class="ticket-body">' +
+          '<div class="ticket-row udms"><span class="label">UDMS mapping</span><span class="value">' + s.udms + '</span></div>' +
           '<div class="ticket-row"><span class="label">Definition</span><span class="value">' + s.def + '</span></div>' +
           '<div class="ticket-row"><span class="label">Entry criteria</span><span class="value">' + s.entry + '</span></div>' +
           '<div class="ticket-row"><span class="label">Consultant action</span><span class="value">' + s.action + '</span></div>' +
+          assignRow +
         '</div>' +
       '</div>';
 
