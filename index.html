@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thompsons For Travel — Freshsales Pipeline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -437,14 +438,14 @@
       udms: "Not one of the three UDMS statuses relevant here.",
       def: "Deposit payment has been confirmed.",
       entry: "Deposit payment recorded in UDMS.",
-      action: "Confirm with the traveller, and create a manual task for the balance due date until that reminder is automated."
+      action: "Confirm with the traveller, and create a manual task for the balance due date until that reminder is automated. This is also where the Deposit Paid field ticks true on the deal, the flag Cancelled later checks to decide whether the contact goes to Declined."
     },
     won: {
       code: "TFT \u00b7 06", title: "Full Payment Received \u2013 Won", badge: "won",
       udms: "Maps to UDMS's Booked status.",
       def: "Full payment received and booking confirmed.",
       entry: "Balance paid and booking confirmed in UDMS.",
-      action: "Close as Won, and hand the full profile (occasion, style, preferences, what worked) to post-sales/ops. UDMS owns the operational booking from here, but Freshsales still handles post-booking communication and any pre-trip journey information shared with the traveller, so this isn't the end of contact, just the end of the sales pipeline tracking it."
+      action: "Close as Won, and hand the full profile (occasion, style, preferences, what worked) to post-sales/ops. UDMS owns the operational booking from here, but Freshsales still handles post-booking communication and any pre-trip journey information shared with the traveller, so this isn't the end of contact, just the end of the sales pipeline tracking it. A Workflow moves the Contact's Stage to Customer and Status to Booked here, and ticks Deposit Paid on the deal if it isn't already (covers a last-minute booking that skipped Deposit Received entirely)."
     },
     parked: {
       code: "TFT \u00b7 07", title: "Parked", badge: "parked",
@@ -458,14 +459,14 @@
       udms: "Not one of the three UDMS statuses relevant here.",
       def: "A booking that had progressed past acceptance has since been cancelled.",
       entry: "Cancellation processed in UDMS after acceptance or payment.",
-      action: "Log the cancellation reason and process the refund per policy; note anything from the profile that explains it, for future contact."
+      action: "Log the cancellation reason and process the refund per policy; note anything from the profile that explains it, for future contact. A Workflow checks Deposit Paid on the deal: if it's ticked, whether from a deposit or full payment, the contact stays Customer with Status set to Declined. If it's never been ticked, nothing fires, since no real commitment was ever made."
     },
     lost: {
       code: "TFT \u00b7 09", title: "Lost", badge: "exit",
       udms: "Not one of the three UDMS statuses relevant here; a deal marked Lost typically never reached a UDMS quote-and-beyond status.",
       def: "Enquiry did not convert to a booking at all.",
       entry: "Traveller declines, goes cold, or books elsewhere before booking stage.",
-      action: "Log the loss reason against the profile (price, timing, fit, competitor); it's the record a future re-enquiry will start from."
+      action: "Log the loss reason against the profile (price, timing, fit, competitor); it's the record a future re-enquiry will start from. A Workflow updates the Contact automatically: Status becomes Inactive if they were still Prospect, or Declined if they were already a Customer from an earlier booking, the contact never moves back to Prospect either way."
     }
   };
 
